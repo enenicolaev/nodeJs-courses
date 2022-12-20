@@ -15,7 +15,7 @@
         <li><a href="/courses">Курсы</a></li>
       {{/if}}
 
-      {{#if isAuth}}
+      {{#if @root.isAuth}}
         {{#if isAdd}}
           <li class="active"><a href="/add">Добавить курс</a></li>
         {{else}}
