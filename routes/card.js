@@ -1,7 +1,7 @@
 const {Router} = require('express')
 const Course = require('../models/course')
 const router = Router()
-
+const privateRoute = require('../middleware/privateRoute')
 
 function mapCartItems(cart) {
   return cart.items.map(c => ({
@@ -17,13 +17,13 @@ function computePrice(courses) {
   }, 0)
 }
 
-router.post('/add', async (req, res) => {
+router.post('/add', privateRoute, async (req, res) => {
   const course = await Course.findById(req.body.id)
   await req.session.user.addToCart(course)
   res.redirect('/card')
 })
 
-router.delete('/remove/:id', async (req, res) => {
+router.delete('/remove/:id', privateRoute, async (req, res) => {
   await req.session.user.removeFromCart(req.params.id)
   const user = await req.session.user.populate('cart.items.courseId').execPopulate()
   const courses = mapCartItems(user.cart)
