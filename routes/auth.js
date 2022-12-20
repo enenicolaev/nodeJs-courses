@@ -16,7 +16,7 @@ router.get('/logout', async (req, res) => {
 })
 
 router.post('/login', async (req, res) => {
-  const user = await User.findById('5cc1d29dcedab01481e03660')
+  const user = await User.findById(process.env.UserID)
   req.session.user = user
   req.session.isAuthenticated = true
   req.session.save(err => {

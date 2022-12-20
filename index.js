@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const path = require('path')
 const mongoose = require('mongoose')
@@ -9,10 +10,16 @@ const addRoutes = require('./routes/add')
 const ordersRoutes = require('./routes/orders')
 const coursesRoutes = require('./routes/courses')
 const authRoutes = require('./routes/auth')
-const User = require('./models/user')
 const varMiddleware = require('./middleware/variables')
 
+const MongoDBStore = require('connect-mongodb-session')(session);
+
 const app = express()
+
+const store = new MongoDBStore({
+  uri: process.env.MongoURL,
+  collection: 'sessions'
+});
 
 const hbs = exphbs.create({
   defaultLayout: 'main',
@@ -28,7 +35,8 @@ app.use(express.urlencoded({extended: true}))
 app.use(session({
   secret: 'some secret value',
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  store
 }))
 app.use(varMiddleware)
 
@@ -43,20 +51,11 @@ const PORT = process.env.PORT || 3000
 
 async function start() {
   try {
-    const url = `mongodb+srv://vladilen:0I5GEL9uLUcR38GC@cluster0-3rrau.mongodb.net/shop`
-    await mongoose.connect(url, {
+    await mongoose.connect(process.env.MongoURL, {
       useNewUrlParser: true,
       useFindAndModify: false
     })
-    // const candidate = await User.findOne()
-    // if (!candidate) {
-    //   const user = new User({
-    //     email: 'vladilen@mail.ru',
-    //     name: 'Vladilen',
-    //     cart: {items: []}
-    //   })
-    //   await user.save()
-    // }
+
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`)
     })
