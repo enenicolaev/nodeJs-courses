@@ -12,7 +12,7 @@ const coursesRoutes = require('./routes/courses')
 const authRoutes = require('./routes/auth')
 const varMiddleware = require('./middleware/variables')
 const userMiddleware = require('./middleware/userData')
-const { Console } = require('console')
+const csrf = require('csurf')
 
 const MongoDBStore = require('connect-mongodb-session')(session);
 
@@ -40,6 +40,7 @@ app.use(session({
   saveUninitialized: false,
   store
 }))
+app.use(csrf())
 app.use(varMiddleware)
 app.use(userMiddleware)
 
