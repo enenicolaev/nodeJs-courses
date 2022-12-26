@@ -35,7 +35,6 @@ router.delete('/remove/:id', privateRoute, async (req, res) => {
 })
 
 router.get('/', async (req, res) => {
-  console.log({user: req.user})
   const user = await req.user
     .populate('cart.items.courseId')
     .execPopulate()

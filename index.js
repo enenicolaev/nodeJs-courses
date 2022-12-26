@@ -54,7 +54,6 @@ const PORT = process.env.PORT || 3000
 
 async function start() {
   try {
-    console.log({url: process.env.MongoURL})
     await mongoose.connect(process.env.MongoURL, {
       useNewUrlParser: false,
       useFindAndModify: false
