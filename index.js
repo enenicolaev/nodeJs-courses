@@ -11,6 +11,8 @@ const ordersRoutes = require('./routes/orders')
 const coursesRoutes = require('./routes/courses')
 const authRoutes = require('./routes/auth')
 const varMiddleware = require('./middleware/variables')
+const userMiddleware = require('./middleware/userData')
+const { Console } = require('console')
 
 const MongoDBStore = require('connect-mongodb-session')(session);
 
@@ -39,6 +41,7 @@ app.use(session({
   store
 }))
 app.use(varMiddleware)
+app.use(userMiddleware)
 
 app.use('/', homeRoutes)
 app.use('/add', addRoutes)
@@ -51,6 +54,7 @@ const PORT = process.env.PORT || 3000
 
 async function start() {
   try {
+    console.log({url: process.env.MongoURL})
     await mongoose.connect(process.env.MongoURL, {
       useNewUrlParser: false,
       useFindAndModify: false
@@ -65,5 +69,3 @@ async function start() {
 }
 
 start()
-
-

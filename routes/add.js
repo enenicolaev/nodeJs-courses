@@ -15,7 +15,7 @@ router.post('/', privateRoute, async (req, res) => {
     title: req.body.title,
     price: req.body.price,
     img: req.body.img,
-    userId: req.session.user
+    userId: req.user._id
   })
 
   try {

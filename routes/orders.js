@@ -5,7 +5,7 @@ const privateRoute = require('../middleware/privateRoute')
 
 router.get('/', privateRoute, async (req, res) => {
   try {
-    const orders = await Order.find({'user.userId': req.session.user._id})
+    const orders = await Order.find({'user.userId': req.user.id})
       .populate('user.userId')
 
     res.render('orders', {
@@ -39,14 +39,14 @@ router.post('/', privateRoute, async (req, res) => {
 
     const order = new Order({
       user: {
-        name: req.session.user.name,
-        userId: req.session.user
+        name: req.user.name,
+        userId: req.user._id
       },
       courses: courses
     })
 
     await order.save()
-    await req.session.user.clearCart()
+    await req.user.clearCart()
 
     res.redirect('/orders')
   } catch (e) {

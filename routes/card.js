@@ -19,22 +19,24 @@ function computePrice(courses) {
 
 router.post('/add', privateRoute, async (req, res) => {
   const course = await Course.findById(req.body.id)
-  await req.session.user.addToCart(course)
+  await req.user.addToCart(course)
   res.redirect('/card')
 })
 
 router.delete('/remove/:id', privateRoute, async (req, res) => {
-  await req.session.user.removeFromCart(req.params.id)
-  const user = await req.session.user.populate('cart.items.courseId').execPopulate()
+  await req.user.removeFromCart(req.params.id)
+  const user = await req.user.populate('cart.items.courseId').execPopulate()
   const courses = mapCartItems(user.cart)
   const cart = {
-    courses, price: computePrice(courses)
+    courses,
+    price: computePrice(courses)
   }
   res.status(200).json(cart)
 })
 
 router.get('/', async (req, res) => {
-  const user = await req.session.user
+  console.log({user: req.user})
+  const user = await req.user
     .populate('cart.items.courseId')
     .execPopulate()
 
