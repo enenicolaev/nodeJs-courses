@@ -4,6 +4,7 @@ const path = require('path')
 const mongoose = require('mongoose')
 const exphbs = require('express-handlebars')
 const session = require('express-session')
+const helmet = require("helmet")
 const homeRoutes = require('./routes/home')
 const cardRoutes = require('./routes/card')
 const addRoutes = require('./routes/add')
@@ -13,13 +14,14 @@ const authRoutes = require('./routes/auth')
 const varMiddleware = require('./middleware/variables')
 const userMiddleware = require('./middleware/userData')
 const csrf = require('csurf')
+var compression = require('compression')
 
 const MongoDBStore = require('connect-mongodb-session')(session);
 
 const app = express()
 
 const store = new MongoDBStore({
-  uri: process.env.MongoURL,
+  uri: process.env.MongoURI,
   collection: 'sessions'
 });
 
@@ -35,12 +37,15 @@ app.set('views', 'views')
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.urlencoded({extended: true}))
 app.use(session({
-  secret: 'some secret value',
+  secret: process.env.SecretKey,
   resave: false,
   saveUninitialized: false,
   store
 }))
 app.use(csrf())
+app.use(helmet());
+app.use(compression())
+
 app.use(varMiddleware)
 app.use(userMiddleware)
 
@@ -55,7 +60,7 @@ const PORT = process.env.PORT || 3000
 
 async function start() {
   try {
-    await mongoose.connect(process.env.MongoURL, {
+    await mongoose.connect(process.env.MongoURI, {
       useNewUrlParser: false,
       useFindAndModify: false
     })
